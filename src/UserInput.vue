@@ -178,23 +178,10 @@ export default {
       }
     })
 
-    document.addEventListener('selectionchange', () => {
-      var selection = document.getSelection()
-      if (
-        !selection ||
-        !selection.anchorNode ||
-        (selection.anchorNode != this.$refs.userInput &&
-          selection.anchorNode.parentNode != this.$refs.userInput)
-      ) {
-        return
-      }
-
-      if (selection.rangeCount) {
-        this.previousSelectionRange = selection.getRangeAt(0).cloneRange()
-      } else {
-        this.previousSelectionRange = null
-      }
-    })
+    document.addEventListener('selectionchange', this._onSelectionChange)
+  },
+  beforeDestroy() {
+    document.removeEventListener('selectionchange', this._onSelectionChange)
   },
   methods: {
     cancelFile() {
@@ -334,6 +321,23 @@ export default {
     },
     _editFinish() {
       store.setState('editMessage', null)
+    },
+    _onSelectionChange() {
+      var selection = document.getSelection()
+      if (
+        !selection ||
+        !selection.anchorNode ||
+        (selection.anchorNode != this.$refs.userInput &&
+          selection.anchorNode.parentNode != this.$refs.userInput)
+      ) {
+        return
+      }
+
+      if (selection.rangeCount) {
+        this.previousSelectionRange = selection.getRangeAt(0).cloneRange()
+      } else {
+        this.previousSelectionRange = null
+      }
     }
   }
 }
